@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Letter</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffe6ee, #ffd4e5);
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+/* ❤️ FLOATING HEARTS */
+.heart {
+    position: fixed;
+    bottom: -20px;
+    color: #e91e63;
+    font-size: 12px;
+    animation: floatUp linear forwards;
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(1.8); opacity: 0; }
+}
+
+/* ✉️ ENVELOPE */
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.envelope::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #ffb6c1 50%, #fff 50%);
+    clip-path: polygon(0 0, 100% 0, 50% 60%);
+    transform-origin: top;
+    transition: transform 0.8s ease;
+}
+
+.envelope.open::before {
+    transform: rotateX(180deg);
+}
+
+.letter {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    padding: 20px;
+    text-align: center;
+    transform: translateY(100%);
+    transition: transform 0.8s ease;
+}
+
+.envelope.open .letter {
+    transform: translateY(0);
+}
+
+h2 { color: #e91e63; }
+
+/* ❌ NO OVERLAY */
+.no-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 120px;
+    color: rgba(233, 30, 99, 0.75);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: 0.3s;
+    pointer-events: none;
+}
+.no-overlay.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* 🌸 POPUP */
+.flower-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.flower-popup.show { display: flex; }
+
+.flower-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+/* 🌷 TULIP */
+.tulip {
+    position: relative;
+    width: 80px;
+    height: 180px;
+    margin: 0 auto 20px;
+    animation: sway 4s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+.stem {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 6px;
+    height: 100px;
+    background: #2e8b57;
+    border-radius: 3px;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom;
+    animation: grow-stem 1.5s forwards;
+}
+
+.leaf {
+    position: absolute;
+    width: 30px;
+    height: 14px;
+    background: #2e8b57;
+    border-radius: 50%;
+    bottom: 40px;
+    transform: scaleX(0);
+    animation: grow-leaf 0.8s forwards;
+}
+
+.leaf.left { left: -8px; animation-delay: 0.8s; }
+.leaf.right { right: -8px; animation-delay: 1s; }
+
+.petal {
+    position: absolute;
+    bottom: 105px;
+    width: 30px;
+    height: 45px;
+    background: linear-gradient(#ff9acb, #ff6fae);
+    border-radius: 15px;
+    transform: scaleY(0);
+    opacity: 0;
+}
+
+.petal.left { left: 5px; animation: bloom-left 1s 1.6s forwards; }
+.petal.center { left: 25px; height: 50px; animation: bloom-center 1s 1.8s forwards; }
+.petal.right { right: 5px; animation: bloom-right 1s 1.6s forwards; }
+
+/* ❤️ ANIMATED HEART CARD */
+.heart-card {
+    width: 280px;
+    height: 260px;
+    margin: 24px auto 0;
+    position: relative;
+    opacity: 0;
+    transform: scale(0.3);
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.heart-card.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.heart-shape {
+    width: 280px;
+    height: 260px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-shape svg {
+    width: 100%;
+    height: 100%;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.heart-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 600;
+    z-index: 10;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    width: 190px;
+}
+
+/* ANIMATIONS */
+@keyframes heartbeat {
+    0%, 100% { 
+        transform: scale(1);
+    }
+    10% { 
+        transform: scale(1.08);
+    }
+    20% { 
+        transform: scale(1);
+    }
+    30% { 
+        transform: scale(1.08);
+    }
+    40% { 
+        transform: scale(1);
+    }
+}
+
+@keyframes grow-stem { to { transform: translateX(-50%) scaleY(1); } }
+@keyframes grow-leaf { to { transform: scaleX(1); } }
+@keyframes bloom-left { to { transform: scaleY(1) rotate(-15deg); opacity: 1; } }
+@keyframes bloom-center { to { transform: scaleY(1); opacity: 1; } }
+@keyframes bloom-right { to { transform: scaleY(1) rotate(15deg); opacity: 1; } }
+@keyframes sway { 50% { transform: rotate(2deg); } }
+</style>
+</head>
+
+<body>
+
+<div class="envelope" id="envelope">
+    <div class="letter">
+        <h2>Will you be my Valentine? 💖</h2>
+        <label><input type="checkbox" id="yesBox"> Yes</label>
+        <label id="noLabel"><input type="checkbox"> No</label>
+        <div class="no-overlay" id="noOverlay">✖</div>
+    </div>
+</div>
+
+<div class="flower-popup" id="popup">
+    <div class="flower-card">
+        <div class="tulip">
+            <div class="petal left"></div>
+            <div class="petal center"></div>
+            <div class="petal right"></div>
+            <div class="stem"></div>
+            <div class="leaf left"></div>
+            <div class="leaf right"></div>
+        </div>
+
+        <div class="heart-card" id="heartCard">
+            <div class="heart-shape">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#e91e63;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#b1124c;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M50,90 C50,90 10,65 10,40 C10,28 18,20 28,20 C38,20 45,27 50,35 C55,27 62,20 72,20 C82,20 90,28 90,40 C90,65 50,90 50,90 Z" 
+                          fill="url(#heartGradient)" 
+                          stroke="#8b0a3d" 
+                          stroke-width="0.5"/>
+                </svg>
+                <div class="heart-text">
+                    Yna, three beautiful years with you.<br>
+                    Today and always — be my Valentine ❤️
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const envelope = document.getElementById('envelope');
+const yesBox = document.getElementById('yesBox');
+const popup = document.getElementById('popup');
+const heartCard = document.getElementById('heartCard');
+const noLabel = document.getElementById('noLabel');
+const noOverlay = document.getElementById('noOverlay');
+
+envelope.addEventListener('click', () => envelope.classList.add('open'));
+
+yesBox.addEventListener('change', () => {
+    popup.classList.add('show');
+    startHearts();
+    setTimeout(() => heartCard.classList.add('show'), 3000);
+});
+
+/* ❌ NO */
+noLabel.addEventListener('mouseenter', () => noOverlay.classList.add('show'));
+noLabel.addEventListener('mouseleave', () => noOverlay.classList.remove('show'));
+noLabel.addEventListener('click', e => e.preventDefault());
+
+function startHearts() {
+    for (let i = 0; i < 40; i++) setTimeout(createHeart, i * 80);
+}
+
+function createHeart() {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.innerText = '❤';
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.fontSize = Math.random() * 10 + 8 + 'px';
+    h.style.animationDuration = Math.random() * 3 + 4 + 's';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
+}
+</script>
+
+</body>
+</html>
